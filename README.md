@@ -1,4 +1,4 @@
-# kafka-poc
+# kafka-poc - in progress
 
 
 http://gitlab.monsanto.com/alcatraz/field-cal-forecast.git
