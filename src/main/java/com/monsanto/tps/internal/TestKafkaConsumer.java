@@ -19,22 +19,23 @@ public class TestKafkaConsumer {
     private final ConsumerConnector consumer;
     private final String topic;
 
-    public TestKafkaConsumer(String zookeeper, String groupId, String
-            topic) {
+    public TestKafkaConsumer(String zookeeper, String groupId, String topic) {
         Properties props = new Properties();
         props.put("zookeeper.connect", zookeeper);
         props.put("group.id", groupId);
         props.put("zookeeper.session.timeout.ms", "500");
         props.put("zookeeper.sync.time.ms", "250");
-        props.put("auto.commit.interval.ms", "1000");
-        consumer = Consumer.createJavaConsumerConnector(
-                new ConsumerConfig(props));
+        props.put("zk.connectiontimeout.ms", "1000000");
+        props.put("zk.synctime.ms", "200");
+        props.put("autocommit.enable", "true");
+        props.put("autocommit.interval.ms", "1000");
+
+        consumer = Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
         this.topic = topic;
     }
 
     public void testConsumer() {
         Map<String, Integer> topicCount = new HashMap<String, Integer>();
-        // Define single thread for topic
         topicCount.put(topic, new Integer(1));
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerStreams = consumer.createMessageStreams(topicCount);
         List<KafkaStream<byte[], byte[]>> streams = consumerStreams.get(topic);
@@ -48,8 +49,8 @@ public class TestKafkaConsumer {
     }
 
     public static void main(String[] args) {
-        String topic = args[0];
-        TestKafkaConsumer testKafkaConsumer = new TestKafkaConsumer("localhost:2181 ", " testgroup ", topic);
+        String topic = "lexicon-to-kafka-push-testing";
+        TestKafkaConsumer testKafkaConsumer = new TestKafkaConsumer("stlutpsdkrprd01.monsanto.com:2182/kafkanp", " testgroup ", topic);
         testKafkaConsumer.testConsumer();
     }
 }
