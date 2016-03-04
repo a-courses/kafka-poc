@@ -23,12 +23,12 @@ public class TestKafkaConsumer {
         Properties props = new Properties();
         props.put("zookeeper.connect", zookeeper);
         props.put("group.id", groupId);
-        props.put("zookeeper.session.timeout.ms", "500");
+        props.put("zookeeper.session.timeout.ms", "5000");
         props.put("zookeeper.sync.time.ms", "250");
         props.put("zk.connectiontimeout.ms", "1000000");
         props.put("zk.synctime.ms", "200");
-        props.put("autocommit.enable", "true");
-        props.put("autocommit.interval.ms", "1000");
+//        props.put("autocommit.enable", "true");
+//        props.put("autocommit.interval.ms", "1000");
 
         consumer = Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
         this.topic = topic;
@@ -36,9 +36,10 @@ public class TestKafkaConsumer {
 
     public void testConsumer() {
         Map<String, Integer> topicCount = new HashMap<String, Integer>();
-        topicCount.put(topic, new Integer(1));
+        topicCount.put(topic, new Integer(6));
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerStreams = consumer.createMessageStreams(topicCount);
         List<KafkaStream<byte[], byte[]>> streams = consumerStreams.get(topic);
+        System.out.println("-------------------------"+streams.size());
         for (final KafkaStream stream : streams) {
             ConsumerIterator<byte[], byte[]> consumerIte = stream.iterator();
             while (consumerIte.hasNext())
@@ -50,7 +51,7 @@ public class TestKafkaConsumer {
 
     public static void main(String[] args) {
         String topic = "lexicon-to-kafka-push-testing";
-        TestKafkaConsumer testKafkaConsumer = new TestKafkaConsumer("stlutpsdkrprd01.monsanto.com:2182/kafkanp", " testgroup ", topic);
+        TestKafkaConsumer testKafkaConsumer = new TestKafkaConsumer("stlutpsdkrprd01.monsanto.com:2182/kafkanp", "testgroup", topic);
         testKafkaConsumer.testConsumer();
     }
 }

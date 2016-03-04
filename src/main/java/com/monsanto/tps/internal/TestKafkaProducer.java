@@ -1,5 +1,6 @@
 package com.monsanto.tps.internal;
 
+import com.google.gson.Gson;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
@@ -39,16 +40,22 @@ public class TestKafkaProducer {
         productTwo.setPreCommercialName("SBR8T15-6331");
         productTwo.setCreatedDate(new Date());
 
-
         Product productThree = new Product();
         productThree.setId(3L);
         productThree.setCommercialName("SBR8T12-6107");
         productThree.setPreCommercialName("SBR8T12-6107");
         productThree.setCreatedDate(new Date());
 
+        Product productFour = new Product();
+        productFour.setId(4L);
+        productFour.setCommercialName("12-8T-BLK-1676CML");
+        productFour.setPreCommercialName("12-8T-BLK-1676CML");
+        productFour.setCreatedDate(new Date());
+
         productList.add(productOne);
         productList.add(productTwo);
         productList.add(productThree);
+        productList.add(productFour);
 
         return productList;
 
@@ -57,13 +64,9 @@ public class TestKafkaProducer {
     public static void main(String[] args) {
         TestKafkaProducer sp = new TestKafkaProducer();
         String topic = "lexicon-to-kafka-push-testing";
-        String messageStr = "Some data from tps network";
-        KeyedMessage<Integer, String> data = new KeyedMessage<Integer, String>(topic, messageStr);
+        String productData = new Gson().toJson(sp.getProductList());
+        KeyedMessage<Integer, String> data = new KeyedMessage<Integer, String>(topic, productData);
         producer.send(data);
-/*
-        KeyedMessage<Integer, List<Product>> data = new KeyedMessage<Integer, List<Product>>(topic, sp.getProductList());
-        producer.send((List<KeyedMessage<Integer, String>>) data);
-*/
         producer.close();
     }
 }
