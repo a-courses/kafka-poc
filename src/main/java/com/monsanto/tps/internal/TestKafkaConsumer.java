@@ -36,17 +36,19 @@ public class TestKafkaConsumer {
 
     public void testConsumer() {
         Map<String, Integer> topicCount = new HashMap<String, Integer>();
-        topicCount.put(topic, new Integer(6));
+        topicCount.put(topic, new Integer(1));
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerStreams = consumer.createMessageStreams(topicCount);
         List<KafkaStream<byte[], byte[]>> streams = consumerStreams.get(topic);
-        System.out.println("-------------------------"+streams.size());
+        System.out.println("-------------------------" + streams.size());
         for (final KafkaStream stream : streams) {
             ConsumerIterator<byte[], byte[]> consumerIte = stream.iterator();
             while (consumerIte.hasNext())
                 System.out.println("Message from Single Topic :: " + new String(consumerIte.next().message()));
         }
-        if (consumer != null)
+        if (consumer != null) {
+            System.out.println("shutting down consumer");
             consumer.shutdown();
+        }
     }
 
     public static void main(String[] args) {

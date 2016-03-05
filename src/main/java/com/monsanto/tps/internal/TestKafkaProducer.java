@@ -5,26 +5,30 @@ import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by SMALA on 2/29/2016.
  */
 public class TestKafkaProducer {
 
-    private static Producer<Integer, String> producer;
+    private static Producer<String, String> producer;
     private final Properties props = new Properties();
     private List<Product> productList = new ArrayList<Product>();
 
+//    private String metadataBrokerList = '''stlutpsdkrprd02.monsanto.com:9092,stlutpsdkrprd01.monsanto.com:9094,stlutpsdkrprd01.monsanto.com:9093,stlutpsdkrprd01.monsanto.com:9092,stlutpsdkrprd02.monsanto.com:9094,stlutpsdkrprd02.monsanto.com:9093''';
+
     public TestKafkaProducer() {
 //        props.put("broker.list", "localhost:9092");
-        props.put("metadata.broker.list", "stlutpsdkrprd01.monsanto.com:9093");
+        props.put("metadata.broker.list", "stlutpsdkrprd02.monsanto.com:9092,\n" +
+                "stlutpsdkrprd01.monsanto.com:9094,\n" +
+                "stlutpsdkrprd01.monsanto.com:9093,\n" +
+                "stlutpsdkrprd01.monsanto.com:9092,\n" +
+                "stlutpsdkrprd02.monsanto.com:9094,\n" +
+                "stlutpsdkrprd02.monsanto.com:9093,");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "1");
-        producer = new Producer<Integer, String>(new ProducerConfig(props));
+        producer = new Producer<String, String>(new ProducerConfig(props));
     }
 
     List<Product> getProductList() {
@@ -65,7 +69,8 @@ public class TestKafkaProducer {
         TestKafkaProducer sp = new TestKafkaProducer();
         String topic = "lexicon-to-kafka-push-testing";
         String productData = new Gson().toJson(sp.getProductList());
-        KeyedMessage<Integer, String> data = new KeyedMessage<Integer, String>(topic, productData);
+//        KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, productData);
+        KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, UUID.randomUUID().toString(), productData);
         producer.send(data);
         producer.close();
     }
